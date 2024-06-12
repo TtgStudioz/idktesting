@@ -23,17 +23,24 @@ app.get('/proxy', async (req, res) => {
         // Load HTML into cheerio
         const $ = cheerio.load(html);
 
-        // Array to store text content of all matching divs
-        const divTextArray = [];
+        // Find all elements with the specified class name
+        const elements = $(`.${className}`);
 
-        // Find all divs with the specified class name and iterate over them
-        $(`.${className}`).each((index, element) => {
-            const divText = $(element).text();
-            divTextArray.push(divText);
-        });
-
-        // Return the array of text content as JSON response
-        res.json({ texts: divTextArray });
+        // Check if any elements were found
+        if (elements.length > 0) {
+            // Array to hold text content of all matching elements
+            const texts = [];
+            elements.each((index, element) => {
+                // Push each element's text content to the texts array
+                texts.push($(element).text().trim());
+            });
+            // Return the array of text contents as JSON response
+            res.json({ texts });
+        } else {
+            res.json({ texts: [] });
+            // If no elements found, return an appropriate response
+            // res.status(404).json({ error: 'No elements found with the specified class name' });
+        }
     } catch (error) {
         console.error('Error fetching or parsing data:', error);
         res.status(500).json({ error: 'Failed to fetch or parse data' });
