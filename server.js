@@ -24,7 +24,8 @@ app.get('/proxy', async (req, res) => {
         const $ = cheerio.load(html);
 
         // Find the div with the specified class name and get its text content
-        const divText = $(`.${className}`).text().trim();
+        // const divText = $(`.${className}`).text().trim();
+        const divText = $(`.${className}`).innerHTML;
 
         // Return the text content as JSON response
         res.json({ text: divText });
