@@ -1,6 +1,6 @@
 const express = require('express');
 const axios = require('axios');
-const cheerio = require('cheerio'); // Add cheerio for HTML parsing
+const cheerio = require('cheerio');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -24,11 +24,17 @@ app.get('/proxy', async (req, res) => {
         const $ = cheerio.load(html);
 
         // Find the div with the specified class name and get its text content
-        // const divText = $(`.${className}`).text().trim();
-        const divText = $(`.${className}`).innerHTML;
+        const divText = $(`.${className}`).text().trim();
 
-        // Return the text content as JSON response
-        res.json({ text: divText });
+        // Check if we found any text
+        if (divText) {
+            // Return the text content as JSON response
+            res.json({ text: divText });
+        } else {
+            res.json({ text: "Nothing here"});
+            // If no text found, return an error or appropriate response
+            // res.status(404).json({ error: 'No text found with the specified class name' });
+        }
     } catch (error) {
         console.error('Error fetching or parsing data:', error);
         res.status(500).json({ error: 'Failed to fetch or parse data' });
