@@ -29,11 +29,8 @@ app.get('/proxy', async (req, res) => {
         // Check if any elements were found
         if (elements.length > 0) {
             // Array to hold text content of all matching elements
-            const texts = [];
-            elements.each((index, element) => {
-                // Push each element's text content to the texts array
-                texts.push($(element).text().trim());
-            });
+            const texts = elements.map((index, element) => $(element).text().trim()).get();
+            
             // Return the array of text contents as JSON response
             res.json({ texts });
         } else {
