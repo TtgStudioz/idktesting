@@ -28,7 +28,7 @@ app.get('/proxy', async (req, res) => {
         // Find the div with the specified class name and get its text content
         const divText = $(`.${className}`).text();
 
-        const elements = $(`.${className}`);
+        var elements = html.getElementsByClassName(className);
 
         console.log(elements);
 
