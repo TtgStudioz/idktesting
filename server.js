@@ -16,6 +16,10 @@ app.get('/proxy', async (req, res) => {
         const url = req.query.url; // Get the 'url' query parameter
         const className = req.query.className; // Get the 'className' query parameter
 
+        if (!url || !className) {
+            return res.status(400).json({ error: 'Missing required query parameters: url and className' });
+        }
+
         // Fetch HTML content from the provided URL
         const response = await axios.get(url);
         const html = response.data;
@@ -24,16 +28,13 @@ app.get('/proxy', async (req, res) => {
         const $ = cheerio.load(html);
 
         // Find all divs with the specified class name and get their text content
-        const elements = $(`.${className}`);
         let divTexts = [];
-
-        elements.each((index, element) => {
+        $(`.${className}`).each((index, element) => {
             divTexts.push($(element).text());
         });
 
-        // Check if we found any text
+        // Return the text content as JSON response
         if (divTexts.length > 0) {
-            // Return the text content as JSON response
             res.json({ texts: divTexts });
         } else {
             res.json({ texts: "Nothing here" });
