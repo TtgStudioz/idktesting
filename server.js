@@ -30,7 +30,8 @@ app.get('/proxy', async (req, res) => {
         // Find all divs with the specified class name and get their text content
         let divTexts = [];
         $(`.${className}`).each((index, element) => {
-            divTexts.push($(element).text());
+            // Append the text of each element found
+            divTexts.push($(element).text().trim());
         });
 
         // Return the text content as JSON response
