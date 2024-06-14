@@ -14,11 +14,6 @@ app.use((req, res, next) => {
 app.get('/proxy', async (req, res) => {
     try {
         const url = req.query.url; // Get the 'url' query parameter
-        const className = req.query.className; // Get the 'className' query parameter
-
-        if (!url || !className) {
-            return res.status(400).json({ error: 'Missing required query parameters: url and className' });
-        }
 
         // Fetch HTML content from the provided URL
         const response = await axios.get(url);
@@ -27,25 +22,18 @@ app.get('/proxy', async (req, res) => {
         // Load HTML into cheerio
         const $ = cheerio.load(html);
 
-        // Find all divs with the specified class name and get their text content
-        let divTexts = [];
-        $(`.${className}`).each((index, element) => {
-            let text = '';
-            $(element).contents().each((i, el) => {
-                if (el.type === 'text') {
-                    text += $(el).text().trim();
-                } else if (el.type === 'tag') {
-                    text += $(el).text().trim();
-                }
-            });
-            divTexts.push(text);
-        });
+        // Find the div without a class or id
+        // For example, let's say you want to get the first div element
+        const divText = $('div').first().text(); // or use any other appropriate selector
 
-        // Return the text content as JSON response
-        if (divTexts.length > 0) {
-            res.json({ texts: divTexts });
+        // Check if we found any text
+        if (divText) {
+            // Return the text content as JSON response
+            res.json({ text: divText });
         } else {
-            res.json({ texts: "Nothing here" });
+            res.json({ text: "Nothing here"});
+            // If no text found, return an error or appropriate response
+            // res.status(404).json({ error: 'No text found in the specified div' });
         }
     } catch (error) {
         console.error('Error fetching or parsing data:', error);
